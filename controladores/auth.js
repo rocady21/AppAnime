@@ -140,12 +140,43 @@ const ListadoUsuarios = (req,res = response)=> {
     }
 }
 
+const getInfoByToken = async (req,res = response)=> {
+    
+    const uid = req?.uid;
+
+    console.log(uid)
+
+    const userInfo = await Usuario.findOne({_id: uid});
+    try {
+        if(userInfo) {
+            res.status(200).json({
+                ok:true,
+                userInfo: {
+                    ...userInfo,
+                    password: null,
+                },
+            })
+        } else {
+            throw new Error("Error al consultar el usuario")
+        }
+    } catch (error) {
+        res.status(400).json({
+            ok:false,
+            msg: error?.message,
+        })
+        
+    }
+}
+
+
+
+
 
 
 module.exports = {
     CrearUsuario,
     LoginUsuario,
     RevalidarJWT,
-    ListadoUsuarios
-
+    ListadoUsuarios,
+    getInfoByToken,
 }

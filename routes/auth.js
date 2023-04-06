@@ -2,7 +2,7 @@
 const {Router} = require("express")
 const {check} = require("express-validator")
 const {validarCampos} = require("../middlware/validarCampos.js")
-const {CrearUsuario,LoginUsuario,RevalidarJWT,ListadoUsuarios} = require("../controladores/auth.js")
+const {CrearUsuario,LoginUsuario,RevalidarJWT,ListadoUsuarios, getInfoByToken} = require("../controladores/auth.js")
 const {ValidarJWT} = require("../helpers/revalidarJWT.js")
 const router = Router();
 
@@ -20,6 +20,7 @@ router.post("/login",
 ]
 ,LoginUsuario)
 
+router.get("/validarUserInfoByToken",ValidarJWT, getInfoByToken)
 
 router.get("/revalidarJWT",ValidarJWT,RevalidarJWT)
 

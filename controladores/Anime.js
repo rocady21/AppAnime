@@ -35,7 +35,7 @@ const ListadoAnime = async(req,res = response) => {
 
     const {name} = req.body 
 
-    const animes = Animes.find({name:name})
+    const animes = await Animes.find({name:name})
     if(!animes) {
         return res.status(400).json({
             ok:false,
@@ -49,6 +49,26 @@ const ListadoAnime = async(req,res = response) => {
     })
     
 }
+const getAnimeById = async (req,res = response)=> {
+    
+    const uid = req?.uid
+    // devolver info del usuario en base al id
+    try {
+        const anime = await Animes.findOne({_id:uid})
+        if(anime){
+            res.status(200).json({
+                ok:true,
+                anime: anime
+            })
+        } else {
+            throw new Error ("No hay anime con ese id")
+        }
+        
+    } catch (error) {
+        console.log(error)        
+    }
+
+}
 
 
 
@@ -60,5 +80,6 @@ const ListadoAnime = async(req,res = response) => {
 module.exports= {
     CrearAnime,
     ListAnime,
-    ListadoAnime
+    ListadoAnime,
+    getAnimeById
 }

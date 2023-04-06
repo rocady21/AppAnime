@@ -19,12 +19,14 @@ const ValidarJWT = (req,res = response,next)=> {
             token,
             process.env.PALABRA_SECRETA
         )
-        
-        req.name = payload.uid
-        req.uid = payload.name
+        const isExpired = Date.now() >= payload.exp * 1000;
+        if (isExpired) {
+            throw new Error("El token no es valido")
+        }
 
-
-        
+        console.log(payload)
+        req.name = payload.name
+        req.uid = payload.uid
         next()
         
     } catch (error) {
