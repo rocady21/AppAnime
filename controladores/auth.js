@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt")
 
 const CrearUsuario = async(req = request,res = response) => {
     
-        const {name,email,password,rol} = req.body
+        const {photo,name,email,password,rol} = req.body
         
     try {
 
@@ -40,6 +40,7 @@ const CrearUsuario = async(req = request,res = response) => {
          name: usuario.name,
          uid: usuario._id,
          rol: usuario.rol,
+         photo:usuario.photo,
          token : token    
     })        
     } catch (error) {
@@ -151,10 +152,7 @@ const getInfoByToken = async (req,res = response)=> {
         if(userInfo) {
             res.status(200).json({
                 ok:true,
-                userInfo: {
-                    ...userInfo,
-                    password: null,
-                },
+                userInfo
             })
         } else {
             throw new Error("Error al consultar el usuario")

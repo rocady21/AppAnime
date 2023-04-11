@@ -1,6 +1,10 @@
 const {Schema,model} = require("mongoose")
 
 const UsuarioSchema = Schema({
+    photo:{
+        type:String,
+        require:true
+    },
     name:{
         type:String,
         require: true
