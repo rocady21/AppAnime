@@ -51,16 +51,24 @@ const ListadoAnime = async(req,res = response) => {
 }
 const getAnimeById = async (req,res = response)=> {
     
-    const uid = req?.uid
+    const {uid} = req.body;
+    console.log(uid)
+    console.log("1")
     // devolver info del usuario en base al id
     try {
         const anime = await Animes.findOne({_id:uid})
         if(anime){
             res.status(200).json({
                 ok:true,
-                anime: anime
+                anime:anime
+                
             })
+            console.log("2")
         } else {
+            res.status(400).json({
+                ok:false,
+                msg:"No hay anime con ese id"
+            })
             throw new Error ("No hay anime con ese id")
         }
         

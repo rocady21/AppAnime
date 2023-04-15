@@ -12,7 +12,7 @@ router.post("/new",CrearAnime)
 
 router.get("/listA",ListAnime)
 
-router.get("/getAnimebyId",ValidarID,getAnimeById )
+router.post("/getAnimebyId",getAnimeById )
 
 
 
