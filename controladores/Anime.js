@@ -2,6 +2,7 @@ const {
     response
 } = require("express")
 const Animes = require("../modelsBD/Animes")
+const Usuario = require("../modelsBD/Usuario")
 
 
 const CrearAnime = async (req, res = response) => {
@@ -113,25 +114,72 @@ const setComentarios = async (req, res = response) => {
             })
             console.log("comentario actualizado")
             
-
+        
         }
         
     } catch (error) {   
-        console.log(error)
+        console.log("no se pudo agregar el comentario")
+        res.status(400).json({
+            ok:false,
+            msg:"no se pudo actualizar los comentarios"
+        })
         
     }
 
-   
-
 }
 
+const getComentariosbyCap = async(req,res = response) => {
+    const {NumeroCap,idAnime} = req.body
 
+    const animes = await Animes.findOne({_id:idAnime})
 
+    try {
+        if(animes)  {
+            const filtradoComentariosByAnime = await animes.Capitulos.find((cap)=> {
+                return cap.Capitulo === NumeroCap
+            })
+            if(filtradoComentariosByAnime) {
+                
+                const comentarios = filtradoComentariosByAnime.Comentarios
+                
+                const comentariosFInal = [];
 
+                     await Promise.all(
+                    comentarios.map(async(comentario)=> {
+                        const user = await Usuario.findOne({_id:comentario.id_User})
+                        console.log(comentario)
+                        comentario.photo = user.photo
+                        comentariosFInal.push(comentario)
+                        
+                        return comentario
+                        
+                    })
+                ) 
+                
+                if(comentarios) {
+                    res.status(200).json({
+                        ok:true,
+                        comentariosFInal,
+                    })
+                }
+                
+            } else {
+                throw Error("no existen capitulos con ese numero")
 
+            }
+        } else {
+            throw Error("no existe el anime")
+        }
+        
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            ok:false,
+            msg:error
+        })
+    }
 
-
-
+}
 
 
 
@@ -140,5 +188,6 @@ module.exports = {
     ListAnime,
     ListadoAnime,
     getAnimeById,
-    setComentarios
+    setComentarios,
+    getComentariosbyCap
 }

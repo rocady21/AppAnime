@@ -37,6 +37,9 @@ const AnimeSchema = Schema({
                 ref:"Usuario",
                 require:true
             },
+            photo:{
+                type:String
+            },
             comentario:{
                 type:String
             },

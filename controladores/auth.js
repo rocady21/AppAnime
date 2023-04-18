@@ -87,6 +87,7 @@ const LoginUsuario = async(req,res = response)=> {
             uid : usuario._id,
             name: usuario.name,
             rol: usuario.rol,
+            photo:usuario.photo,
             token : token
 
         })
