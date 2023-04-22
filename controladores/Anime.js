@@ -92,77 +92,83 @@ const getAnimeById = async (req, res = response) => {
 
 const setComentarios = async (req, res = response) => {
     const {
-        CamposaActualizar,idAnime,NumeroCap
+        camposaActualizar, idAnime, NumeroCap
     } = req.body
-    
+    console.log("aqui vemos los datos que llegan de comentarios ")
+    console.log(camposaActualizar)
+    console.log(camposaActualizar.comentario)
+
     const comentarioActualizado = await Animes.updateOne({
         _id: idAnime
     }, {
-        $push: {"Capitulos.$[capElement].Comentarios":CamposaActualizar}
+        $push: { "Capitulos.$[capElement].Comentarios": camposaActualizar }
     },
-    { arrayFilters: [{ "capElement.Capitulo": {$eq : NumeroCap} }] },
+        { arrayFilters: [{ "capElement.Capitulo": { $eq: NumeroCap } }] },
     )
 
     try {
-        if(!comentarioActualizado) {
+        if (!comentarioActualizado) {
             throw Error("No existe el comentario a actualizar")
         } else {
             res.status(200).json({
-                ok:true,
-                msg:"Comentario Actualizado",
+                ok: true,
+                msg: "Comentario Actualizado",
                 comentarioActualizado,
+                camposaActualizar
             })
             console.log("comentario actualizado")
-            
-        
+
+
         }
-        
-    } catch (error) {   
+
+    } catch (error) {
         console.log("no se pudo agregar el comentario")
         res.status(400).json({
-            ok:false,
-            msg:"no se pudo actualizar los comentarios"
+            ok: false,
+            msg: "no se pudo actualizar los comentarios"
         })
-        
+
     }
 
 }
 
-const getComentariosbyCap = async(req,res = response) => {
-    const {NumeroCap,idAnime} = req.body
+const getComentariosbyCap = async (req, res = response) => {
+    const { NumeroCap, idAnime } = req.body
 
-    const animes = await Animes.findOne({_id:idAnime})
+    const animes = await Animes.findOne({ _id: idAnime })
 
     try {
-        if(animes)  {
-            const filtradoComentariosByAnime = await animes.Capitulos.find((cap)=> {
+        if (animes) {
+            const filtradoComentariosByAnime = await animes.Capitulos.find((cap) => {
                 return cap.Capitulo === NumeroCap
             })
-            if(filtradoComentariosByAnime) {
-                
+            if (filtradoComentariosByAnime) {
+
                 const comentarios = filtradoComentariosByAnime.Comentarios
-                
+
                 const comentariosFInal = [];
 
-                     await Promise.all(
-                    comentarios.map(async(comentario)=> {
-                        const user = await Usuario.findOne({_id:comentario.id_User})
+                await Promise.all(
+                    comentarios.map(async (comentario) => {
+                        const user = await Usuario.findOne({ _id: comentario.id_User })
                         console.log(comentario)
                         comentario.photo = user.photo
                         comentariosFInal.push(comentario)
-                        
+
                         return comentario
-                        
+
                     })
-                ) 
-                
-                if(comentarios) {
+                )
+
+                if (comentarios) {
+                    console.log("aqui veremos el comentario fianl ")
+                    console.log(comentarios)
                     res.status(200).json({
-                        ok:true,
+                        ok: true,
                         comentariosFInal,
                     })
                 }
-                
+
             } else {
                 throw Error("no existen capitulos con ese numero")
 
@@ -170,12 +176,12 @@ const getComentariosbyCap = async(req,res = response) => {
         } else {
             throw Error("no existe el anime")
         }
-        
+
     } catch (error) {
         console.log(error)
         res.status(400).json({
-            ok:false,
-            msg:error
+            ok: false,
+            msg: error
         })
     }
 
