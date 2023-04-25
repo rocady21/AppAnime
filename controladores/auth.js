@@ -2,7 +2,7 @@ const { request, response } = require("express");
 const Usuario = require("../modelsBD/Usuario.js")
 const { generarJWT } = require("../middlware/generarJWT.js")
 // libreria para encriptar contraseña 
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 
 
 
@@ -167,7 +167,77 @@ const getInfoByToken = async (req, res = response) => {
 
     }
 }
+const getListFriends = async (req, res = response) => {
 
+    const { idUser } = req.body;
+
+    const user = await Usuario.findOne({ _id: idUser })
+    try {
+        if (!user) {
+            throw Error("no hay usuario con ese id ")
+        } else {
+
+            const listFriends = [];
+
+            await Promise.all(
+                user.listFriends.map(async (friend) => {
+                    const infofriend = await Usuario.findOne({ _id: friend.id_User })
+                    if (infofriend) {
+                        listFriends.push(infofriend)
+                    }
+                })
+
+            )
+            res.status(200).json({
+                ok: true,
+                listFriends
+            })
+
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            ok: false,
+            msg: error
+        })
+    }
+
+}
+const AddNewFriend = async (req, res = response) => {
+    const { id_User, id_Friend } = req.body
+
+
+    try {
+        if (id_User !== id_Friend) {
+            const CamposAInertar = {
+                id_User: id_Friend,
+                dateInitFriend: new Date()
+            }
+            const userActualizado = await Usuario.updateOne({
+                _id: id_User
+            }, {
+                $push: {
+                    listFriends: CamposAInertar
+                }
+            }
+            )
+
+            res.status(200).json({
+                ok: true,
+                msg: "el usuario se agrego a la lista de amigos",
+                userActualizado
+            })
+        } else {
+            throw Error("No hau un uuario con eee id")
+        }
+
+
+    } catch (error) {
+        console.log(error)
+    }
+
+
+}
 
 
 
@@ -179,4 +249,6 @@ module.exports = {
     RevalidarJWT,
     ListadoUsuarios,
     getInfoByToken,
+    getListFriends,
+    AddNewFriend
 }

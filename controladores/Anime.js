@@ -151,7 +151,6 @@ const getComentariosbyCap = async (req, res = response) => {
                 await Promise.all(
                     comentarios.map(async (comentario) => {
                         const user = await Usuario.findOne({ _id: comentario.id_User })
-                        console.log(comentario)
                         comentario.photo = user.photo
                         comentariosFInal.push(comentario)
 
