@@ -98,10 +98,7 @@ const LoginUsuario = async (req, res = response) => {
         //generar respuesta
     } catch (error) {
         console.log(error);
-        res.status(400).json({
-            ok: false,
-            msg: "por favor hable con el administrador"
-        })
+
 
     }
 
