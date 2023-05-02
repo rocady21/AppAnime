@@ -2,50 +2,53 @@ const { Schema, model } = require("mongoose")
 
 const PostSchema = Schema({
     descripcion: {
-        type:String,
-        require:true
+        type: String,
+        require: true
     },
-    foto:{
-        type:String
+    foto: {
+        type: String
     },
-    id_user_publicate:{
-        type:Schema.Types.ObjectId,
-        ref:"Usuario",
-        require:true
+    id_user_publicate: {
+        type: Schema.Types.ObjectId,
+        ref: "Usuario",
+        require: true
     },
-    Ubicacion:{
-        type:String
+    Ubicacion: {
+        type: String
     },
-    Tipo:{
-        type:String,
-        require:true
+    Tipo: {
+        type: String,
+        require: true
     },
-    MeGusta:{
-        type:Number
+    MeGusta: {
+        type: Number
     },
-    Comentarios:[
+    Comentarios: [
         {
             id_User: {
-                type:Schema.Types.ObjectId,
-                ref:"Usuario",
-                require:true
+                type: Schema.Types.ObjectId,
+                ref: "Usuario",
+                require: true
             },
-            photo:{
-                type:String
+            photo: {
+                type: String
             },
-            comentario:{
-                type:String
+            comentario: {
+                type: String
             },
-            valoracion:{
-                type:Number
+            valoracion: {
+                type: Number
             },
-            Fecha:{
-                type:String
-            }
+            Fecha: {
+                type: String
+            },
+            MeGusta: {
+                type: Number
+            },
         }
     ],
-    FechaPublicacion:{
-        type:String,
+    FechaPublicacion: {
+        type: String,
     }
 })
 
