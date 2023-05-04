@@ -1,6 +1,6 @@
 const express = require("express")
 const dotenv = require("dotenv").config();
-const { dbConection} = require("./configDB.js")
+const { dbConection } = require("./configDB.js")
 const app = express()
 const cors = require("cors")
 // conexion bd
@@ -20,6 +20,6 @@ app.use("/api/posts", require("./routes/post.js"))
 
 
 const PUERTO = process.env.PUERTO
-app.listen(PUERTO, ()=> {
+app.listen(PUERTO, () => {
     console.log(`el servidor esta escuchando en el puerto ${PUERTO}`)
 })
