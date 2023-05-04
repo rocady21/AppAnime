@@ -1,5 +1,6 @@
 const { request, response } = require("express");
 const Usuario = require("../modelsBD/Usuario.js")
+const Animes = require("../modelsBD/Animes.js")
 const { generarJWT } = require("../middlware/generarJWT.js")
 // libreria para encriptar contraseña 
 const bcrypt = require("bcrypt");
@@ -120,9 +121,9 @@ const RevalidarJWT = async (req, res = response) => {
     })
 
 }
-const ListadoUsuarios = (req, res = response) => {
+const ListadoUsuarios = async(req, res = response) => {
 
-    const usuarios = Usuario.find()
+    const usuarios = await Usuario.find()
     try {
         if (usuarios) {
             res.status(200).json({
@@ -236,6 +237,72 @@ const AddNewFriend = async (req, res = response) => {
 
 }
 
+const addAnimeFav = async(req,res=response)=> {
+    const {id_user,Data} = req.body
+
+
+    try {
+        if(id_user) {
+            const userUpdated = await Usuario.updateOne({
+                _id:id_user
+            },{
+                $push: {
+                    AnimesFav: Data
+                }
+            })
+
+            if(userUpdated) {
+                res.status(200).json({
+                    ok:true,
+                    msg:"Anime agregado a Favoritos",
+                    userUpdated
+                })
+            }
+
+        } else 
+        res.status(400).json({
+            ok:false,
+            msg:"No hay un usuario con ese id"
+        })
+        
+    } catch (error) {
+        
+    }
+}
+
+const listAnimeFav = async(req,res=response)=> {
+    const {id_User} = req.body
+
+    const User = await Usuario.findOne({_id:id_User})
+    try {
+        if(User) {
+            const AnimesFav = User.AnimesFav
+            const data = []
+
+            await Promise.all(
+                AnimesFav.map(async(animeFav)=> {
+                    const anime = await Animes.findOne({_id:animeFav.id_Anime})
+                    if(anime) {
+                        data.push(anime)
+                    }
+                })
+            )
+            return res.status(200).json({
+                ok:true,
+                AnimesFav:data
+            })
+        } else 
+        throw Error("No hay ningun usuario con ese id")
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok:false,
+            error
+        })
+    }
+
+}
+
 
 
 
@@ -247,5 +314,7 @@ module.exports = {
     ListadoUsuarios,
     getInfoByToken,
     getListFriends,
-    AddNewFriend
+    AddNewFriend,
+    addAnimeFav,
+    listAnimeFav
 }

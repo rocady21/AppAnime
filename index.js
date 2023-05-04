@@ -8,6 +8,7 @@ const cors = require("cors")
 dbConection();
 
 // cors para dar permiso a rutas 
+app.use(cors())
 
 // lo que le digo es que las peticiones que haga en formato json las extraigo 
 app.use(express.json())

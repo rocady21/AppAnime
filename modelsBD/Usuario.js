@@ -32,6 +32,21 @@ const UsuarioSchema = Schema({
                 type: String
             }
         }
+    ],
+    AnimesFav:[
+        {
+            id_Anime:{
+                type:Schema.Types.ObjectId,
+                ref:"Anime"
+            },
+            fechaAgregado:{
+                type:String,
+                require:true
+            },
+            comentario:{
+                type:String
+            },
+        }
     ]
 })
 
