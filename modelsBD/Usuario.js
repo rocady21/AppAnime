@@ -30,21 +30,24 @@ const UsuarioSchema = Schema({
             },
             dateInitFriend: {
                 type: String
+            },
+            status: {
+                type: String
             }
         }
     ],
-    AnimesFav:[
+    AnimesFav: [
         {
-            id_Anime:{
-                type:Schema.Types.ObjectId,
-                ref:"Anime"
+            id_Anime: {
+                type: Schema.Types.ObjectId,
+                ref: "Anime"
             },
-            fechaAgregado:{
-                type:String,
-                require:true
+            fechaAgregado: {
+                type: String,
+                require: true
             },
-            comentario:{
-                type:String
+            comentario: {
+                type: String
             },
         }
     ]

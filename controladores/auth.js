@@ -121,7 +121,7 @@ const RevalidarJWT = async (req, res = response) => {
     })
 
 }
-const ListadoUsuarios = async(req, res = response) => {
+const ListadoUsuarios = async (req, res = response) => {
 
     const usuarios = await Usuario.find()
     try {
@@ -179,9 +179,12 @@ const getListFriends = async (req, res = response) => {
 
             await Promise.all(
                 user.listFriends.map(async (friend) => {
-                    const infofriend = await Usuario.findOne({ _id: friend.id_User })
-                    if (infofriend) {
-                        listFriends.push(infofriend)
+                    if (friend.status === "friend") {
+                        const infofriend = await Usuario.findOne({ _id: friend.id_User })
+                        if (infofriend) {
+                            listFriends.push(infofriend)
+                        }
+
                     }
                 })
 
@@ -201,28 +204,66 @@ const getListFriends = async (req, res = response) => {
     }
 
 }
+const getFriendRequest = async (req, res = response) => {
+
+    const { idUser } = req.body;
+
+    const user = await Usuario.findOne({ _id: idUser })
+    try {
+
+        const listFriends = [];
+
+        await Promise.all(
+            user.listFriends.map(async (friend) => {
+                if (friend.status === "pending") {
+                    const infofriend = await Usuario.findOne({ _id: friend.id_User })
+                    if (infofriend) {
+                        listFriends.push(infofriend)
+                    }
+
+                }
+            })
+
+        )
+        res.status(200).json({
+            ok: true,
+            listFriends
+        })
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            ok: false,
+            msg: error
+        })
+    }
+
+}
+
 const AddNewFriend = async (req, res = response) => {
-    const { id_User, id_Friend } = req.body
+    const { id_user, id_friend } = req.body
 
 
     try {
-        if (id_User !== id_Friend) {
-            const CamposAInertar = {
-                id_User: id_Friend,
-                dateInitFriend: new Date()
+        if (id_user !== id_friend) {
+            const CamposAInsertar = {
+                id_User: id_user,
+                dateInitFriend: new Date(),
+                status: "pending"
             }
             const userActualizado = await Usuario.updateOne({
-                _id: id_User
+                _id: id_friend
             }, {
                 $push: {
-                    listFriends: CamposAInertar
+                    listFriends: CamposAInsertar
                 }
             }
             )
 
             res.status(200).json({
                 ok: true,
-                msg: "el usuario se agrego a la lista de amigos",
+                msg: "solicitud de amistad enviada",
                 userActualizado
             })
         } else {
@@ -237,68 +278,162 @@ const AddNewFriend = async (req, res = response) => {
 
 }
 
-const addAnimeFav = async(req,res=response)=> {
-    const {id_user,Data} = req.body
+const addAnimeFav = async (req, res = response) => {
+    const { id_user, Data } = req.body
 
 
     try {
-        if(id_user) {
+        if (id_user) {
             const userUpdated = await Usuario.updateOne({
-                _id:id_user
-            },{
+                _id: id_user
+            }, {
                 $push: {
                     AnimesFav: Data
                 }
             })
 
-            if(userUpdated) {
+            if (userUpdated) {
                 res.status(200).json({
-                    ok:true,
-                    msg:"Anime agregado a Favoritos",
+                    ok: true,
+                    msg: "Anime agregado a Favoritos",
                     userUpdated
                 })
             }
 
-        } else 
-        res.status(400).json({
-            ok:false,
-            msg:"No hay un usuario con ese id"
-        })
-        
+        } else
+            res.status(400).json({
+                ok: false,
+                msg: "No hay un usuario con ese id"
+            })
+
     } catch (error) {
-        
+
     }
 }
 
-const listAnimeFav = async(req,res=response)=> {
-    const {id_User} = req.body
+const listAnimeFav = async (req, res = response) => {
+    const { id_User } = req.body
 
-    const User = await Usuario.findOne({_id:id_User})
+    const User = await Usuario.findOne({ _id: id_User })
     try {
-        if(User) {
+        if (User) {
             const AnimesFav = User.AnimesFav
             const data = []
 
             await Promise.all(
-                AnimesFav.map(async(animeFav)=> {
-                    const anime = await Animes.findOne({_id:animeFav.id_Anime})
-                    if(anime) {
+                AnimesFav.map(async (animeFav) => {
+                    const anime = await Animes.findOne({ _id: animeFav.id_Anime })
+                    if (anime) {
                         data.push(anime)
                     }
                 })
             )
             return res.status(200).json({
-                ok:true,
-                AnimesFav:data
+                ok: true,
+                AnimesFav: data
             })
-        } else 
-        throw Error("No hay ningun usuario con ese id")
+        } else
+            throw Error("No hay ningun usuario con ese id")
     } catch (error) {
         console.log(error)
         res.status(500).json({
-            ok:false,
+            ok: false,
             error
         })
+    }
+
+}
+
+const aceptarAmigo = async (req, res = response) => {
+    const { id_user, id_friend } = req.body
+
+    const user = await Usuario.findOne({ _id: id_user })
+    const userFriend = await Usuario.findOne({ _id: id_friend })
+
+    try {
+        if (!user) {
+            res.status(400).json({
+                ok: false,
+                msg: "el usuario no existe"
+            })
+        } if (!userFriend) {
+            res.status(400).json({
+                ok: false,
+                msg: "el usuario friend no existe"
+            })
+        }
+        const FriendAdd = await Usuario.updateOne({
+            _id: id_friend
+        },
+            {
+                $set: {
+                    listFriends: {
+                        status: "accept"
+                    }
+                }
+            })
+        if (FriendAdd) {
+            const CamposAInsertar = {
+                id_User: id_friend,
+                dateInitFriend: new Date(),
+                status: "accept"
+            }
+            const userActualizado = await Usuario.updateOne({
+                _id: id_user
+            }, {
+                $push: {
+                    listFriends: CamposAInsertar
+                }
+            }
+            )
+        }
+        res.status(200).json({
+            ok: true,
+            msg: "solicitud de amistad aceptada",
+            FriendAdd
+        })
+    } catch (error) {
+        console.log(error);
+    }
+
+
+}
+
+const rechazarAmigo = async (req, res = response) => {
+    const { id_user, id_friend } = req.body
+
+    const user = await Usuario.findOne({ _id: id_user })
+    const userFriend = await Usuario.findOne({ _id: id_friend })
+
+    try {
+        if (!user) {
+            res.status(400).json({
+                ok: false,
+                msg: "el usuario no existe"
+            })
+        } if (!userFriend) {
+            res.status(400).json({
+                ok: false,
+                msg: "el usuario friend no existe"
+            })
+        }
+        const FriendAdd = await Usuario.updateOne({
+            _id: id_user
+        },
+            {
+                $set: {
+                    listFriends: {
+                        status: "no-accept"
+                    }
+                }
+            })
+        res.status(200).json({
+            ok: true,
+            msg: "solicitud de amistad rechazada",
+            FriendAdd
+        })
+    } catch (error) {
+        console.log(error);
     }
 
 }
@@ -316,5 +451,8 @@ module.exports = {
     getListFriends,
     AddNewFriend,
     addAnimeFav,
-    listAnimeFav
-}
+    listAnimeFav,
+    aceptarAmigo,
+    rechazarAmigo,
+    getFriendRequest
+} 
