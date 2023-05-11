@@ -165,6 +165,27 @@ const getInfoByToken = async (req, res = response) => {
 
     }
 }
+const getUserById = async(req,res = response )=> {
+    const {id_user} = req.body
+
+    try {
+        const userExist = await Usuario.find({_id:id_user})
+
+        if(userExist[0]) {
+            res.status(200).json({
+                ok:true,
+                userInfo: userExist
+            })
+        }        
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            ok:false,
+            msg:error.message
+        })
+    }
+}
+
 const getListFriends = async (req, res = response) => {
 
     const { idUser } = req.body;
@@ -276,7 +297,6 @@ const AddNewFriend = async (req, res = response) => {
                 return res.status(200).json({
                     ok: true,
                     msg: "solicitud de amistad enviada",
-                    userActualizado
                 })
             } else {
                 console.log(ExistRequest)
@@ -475,6 +495,7 @@ const rechazarAmigo = async (req, res = response) => {
 
 
 
+
 module.exports = {
     CrearUsuario,
     LoginUsuario,
@@ -487,5 +508,6 @@ module.exports = {
     listAnimeFav,
     aceptarAmigo,
     rechazarAmigo,
-    getFriendRequest
+    getFriendRequest,
+    getUserById
 } 

@@ -15,10 +15,14 @@ var _require4 = require("../controladores/auth.js"),
     RevalidarJWT = _require4.RevalidarJWT,
     ListadoUsuarios = _require4.ListadoUsuarios,
     getInfoByToken = _require4.getInfoByToken,
+    getUserById = _require4.getUserById,
     getListFriends = _require4.getListFriends,
     AddNewFriend = _require4.AddNewFriend,
     addAnimeFav = _require4.addAnimeFav,
-    listAnimeFav = _require4.listAnimeFav;
+    listAnimeFav = _require4.listAnimeFav,
+    getFriendRequest = _require4.getFriendRequest,
+    aceptarAmigo = _require4.aceptarAmigo,
+    rechazarAmigo = _require4.rechazarAmigo;
 
 var _require5 = require("../helpers/revalidarJWT.js"),
     ValidarJWT = _require5.ValidarJWT;
@@ -35,6 +39,10 @@ router.get("/revalidarJWT", ValidarJWT, RevalidarJWT);
 router.get("/listU", ListadoUsuarios);
 router.post("/litFriends", getListFriends);
 router.put("/newFriend", AddNewFriend);
+router.post("/getFriendRequest", getFriendRequest);
+router.put("/aceptarAmigo", aceptarAmigo);
+router.put("/rechazarAmigo", rechazarAmigo);
 router.post("/addAnimeFav", addAnimeFav);
 router.post("/listAnimeFav", listAnimeFav);
+router.post("/getUserById", getUserById);
 module.exports = router;
