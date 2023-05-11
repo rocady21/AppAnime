@@ -179,7 +179,7 @@ const getListFriends = async (req, res = response) => {
 
             await Promise.all(
                 user.listFriends.map(async (friend) => {
-                    if (friend.status === "friend") {
+                    if (friend.status === "accept") {
                         const infofriend = await Usuario.findOne({ _id: friend.id_User })
                         if (infofriend) {
                             listFriends.push(infofriend)
@@ -242,37 +242,60 @@ const getFriendRequest = async (req, res = response) => {
 }
 
 const AddNewFriend = async (req, res = response) => {
-    const { id_user, id_friend } = req.body
+    const { id_me, id_friend } = req.body
 
+
+    const friend = await Usuario.findOne({ _id: id_friend })
 
     try {
-        if (id_user !== id_friend) {
+        if (id_me !== id_friend) {
             const CamposAInsertar = {
-                id_User: id_user,
+                id_User: id_me,
                 dateInitFriend: new Date(),
                 status: "pending"
             }
-            const userActualizado = await Usuario.updateOne({
-                _id: id_friend
-            }, {
-                $push: {
-                    listFriends: CamposAInsertar
-                }
-            }
-            )
+            let ExistRequest = "";
 
-            res.status(200).json({
-                ok: true,
-                msg: "solicitud de amistad enviada",
-                userActualizado
-            })
+            await Promise.all(
+                friend.listFriends.map((friend) => {
+                    if (id_me == friend.id_User) {
+                        ExistRequest = "exist"
+                    }
+                })
+            )
+            if (ExistRequest === "") {
+                const userActualizado = await Usuario.updateOne({
+                    _id: id_friend
+                }, {
+                    $push: {
+                        listFriends: CamposAInsertar
+                    }
+                }
+                )
+
+                return res.status(200).json({
+                    ok: true,
+                    msg: "solicitud de amistad enviada",
+                    userActualizado
+                })
+            } else {
+                console.log(ExistRequest)
+                console.log("error")
+                throw new Error("Ya has enviado una solicitud de amistad.")
+            }
+
+
         } else {
-            throw Error("No hau un uuario con eee id")
+            throw new Error("No hay un usuario con ese id")
         }
 
 
     } catch (error) {
         console.log(error)
+        res.status(400).json({
+            ok: false,
+            msg: "Por favor hable con el administrador"
+        })
     }
 
 
@@ -345,13 +368,13 @@ const listAnimeFav = async (req, res = response) => {
 }
 
 const aceptarAmigo = async (req, res = response) => {
-    const { id_user, id_friend } = req.body
+    const { id_me, id_friend } = req.body
 
-    const user = await Usuario.findOne({ _id: id_user })
+    const me = await Usuario.findOne({ _id: id_me })
     const userFriend = await Usuario.findOne({ _id: id_friend })
 
     try {
-        if (!user) {
+        if (!me) {
             res.status(400).json({
                 ok: false,
                 msg: "el usuario no existe"
@@ -362,36 +385,36 @@ const aceptarAmigo = async (req, res = response) => {
                 msg: "el usuario friend no existe"
             })
         }
-        const FriendAdd = await Usuario.updateOne({
-            _id: id_friend
+
+        const updatelistFriendMe = await Usuario.updateOne({
+            _id: id_me
         },
             {
                 $set: {
-                    listFriends: {
-                        status: "accept"
-                    }
-                }
-            })
-        if (FriendAdd) {
-            const CamposAInsertar = {
-                id_User: id_friend,
+                    "listFriends.$[element].status": "accept"
+                },
+
+            },
+            { arrayFilters: [{ "element.id_User": { $eq: id_friend } }] },)
+        if (updatelistFriendMe) {
+            const CamposAInsertarFriend = {
+                id_User: id_me,
                 dateInitFriend: new Date(),
                 status: "accept"
             }
             const userActualizado = await Usuario.updateOne({
-                _id: id_user
+                _id: id_friend
             }, {
                 $push: {
-                    listFriends: CamposAInsertar
+                    listFriends: CamposAInsertarFriend
                 }
             }
             )
+            res.status(200).json({
+                ok: true,
+                msg: "solicitud de amistad aceptada",
+            })
         }
-        res.status(200).json({
-            ok: true,
-            msg: "solicitud de amistad aceptada",
-            FriendAdd
-        })
     } catch (error) {
         console.log(error);
     }
@@ -400,13 +423,13 @@ const aceptarAmigo = async (req, res = response) => {
 }
 
 const rechazarAmigo = async (req, res = response) => {
-    const { id_user, id_friend } = req.body
+    const { id_me, id_friend } = req.body
 
-    const user = await Usuario.findOne({ _id: id_user })
+    const me = await Usuario.findOne({ _id: id_me })
     const userFriend = await Usuario.findOne({ _id: id_friend })
 
     try {
-        if (!user) {
+        if (!me) {
             res.status(400).json({
                 ok: false,
                 msg: "el usuario no existe"
@@ -417,23 +440,33 @@ const rechazarAmigo = async (req, res = response) => {
                 msg: "el usuario friend no existe"
             })
         }
-        const FriendAdd = await Usuario.updateOne({
-            _id: id_user
-        },
+
+        const newFriendsList = me?.listFriends?.filter((item) => {
+            return item?.id_User?.toString() != id_friend;
+        })
+
+        console.log(newFriendsList);
+
+        await Usuario.findOneAndUpdate(
             {
-                $set: {
-                    listFriends: {
-                        status: "no-accept"
-                    }
-                }
-            })
+                _id: me?._id,
+            },
+            {
+                listFriends: newFriendsList,
+            }
+        )
+
+
         res.status(200).json({
             ok: true,
             msg: "solicitud de amistad rechazada",
-            FriendAdd
         })
     } catch (error) {
         console.log(error);
+        res.status(400).json({
+            ok: false,
+            msg: "Internal error",
+        })
     }
 
 }

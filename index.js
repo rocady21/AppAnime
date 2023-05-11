@@ -15,6 +15,8 @@ app.use(express.json())
 app.use("/api/auth", require("./routes/auth.js"))
 app.use("/api/anime", require("./routes/anime.js"))
 app.use("/api/posts", require("./routes/post.js"))
+app.use("/api/chat", require("./routes/Chat.js"))
+
 
 
 
