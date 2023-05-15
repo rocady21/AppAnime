@@ -4,6 +4,8 @@ const Animes = require("../modelsBD/Animes.js")
 const { generarJWT } = require("../middlware/generarJWT.js")
 // libreria para encriptar contraseña 
 const bcrypt = require("bcrypt");
+const { sendNotification } = require("../helpers/pusherEvent.js");
+
 
 
 
@@ -294,10 +296,13 @@ const AddNewFriend = async (req, res = response) => {
                 }
                 )
 
+                sendNotification(id_friend,CamposAInsertar)
+
                 return res.status(200).json({
                     ok: true,
                     msg: "solicitud de amistad enviada",
                 })
+
             } else {
                 console.log(ExistRequest)
                 console.log("error")
