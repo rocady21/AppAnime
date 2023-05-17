@@ -171,12 +171,18 @@ const getUserById = async(req,res = response )=> {
     const {id_user} = req.body
 
     try {
-        const userExist = await Usuario.find({_id:id_user})
+        const userExist = await Usuario.findOne({_id:id_user})
 
-        if(userExist[0]) {
+        if(userExist) {
             res.status(200).json({
                 ok:true,
-                userInfo: userExist
+                userInfo: {
+                    _id:userExist._id,
+                    name:userExist.name,
+                    photo:userExist.photo,
+                    AnimesFav:userExist.AnimesFav,
+                    listFriends:userExist.listFriends
+                }
             })
         }        
     } catch (error) {
@@ -190,9 +196,9 @@ const getUserById = async(req,res = response )=> {
 
 const getListFriends = async (req, res = response) => {
 
-    const { idUser } = req.body;
+    const { id_user } = req.body;
 
-    const user = await Usuario.findOne({ _id: idUser })
+    const user = await Usuario.findOne({ _id: id_user })
     try {
         if (!user) {
             throw Error("no hay usuario con ese id ")
@@ -205,7 +211,13 @@ const getListFriends = async (req, res = response) => {
                     if (friend.status === "accept") {
                         const infofriend = await Usuario.findOne({ _id: friend.id_User })
                         if (infofriend) {
-                            listFriends.push(infofriend)
+                            listFriends.push({
+                                _id:infofriend.id,
+                                name:infofriend.name,
+                                photo:infofriend.photo,
+                                AnimesFav:infofriend.AnimesFav,
+                                listFriends:infofriend.listFriends
+                            })
                         }
 
                     }

@@ -9,7 +9,6 @@ const pusher = new Pusher({
 });
 
 const sendNotification = (user,data)=> {
-    
     pusher.trigger(`friendRequest-${user}`, "addNotification", {
         message: data
       });

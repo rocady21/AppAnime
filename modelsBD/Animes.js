@@ -16,6 +16,9 @@ const AnimeSchema = Schema({
     FechaFinalizacion:{
         type:String,
     },
+    Tipo:{
+        type:String
+    },
     Capitulos:[{
         nameCapitulo:{
             type:String,
