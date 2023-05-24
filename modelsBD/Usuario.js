@@ -50,7 +50,10 @@ const UsuarioSchema = Schema({
                 type: String
             },
         }
-    ]
+    ],
+    status: {
+        type: String
+    }
 })
 
 module.exports = model("Usuario", UsuarioSchema)

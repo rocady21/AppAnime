@@ -8,15 +8,27 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-const sendNotification = (user,data)=> {
-    pusher.trigger(`friendRequest-${user}`, "addNotification", {
-        message: data
-      });
+const sendNotification = (user, data) => {
+  pusher.trigger(`friendRequest-${user}`, "addNotification", {
+    message: data
+  });
+}
+
+const userOnline = (userID) => {
+  pusher.trigger(`friendsOnline`, "addFriendOnline", {
+    message: userID
+  });
+}
+const userDissconection = (userID) => {
+  pusher.trigger(`userDissconect`, "removeFriendOnline", {
+    message: userID
+  });
 }
 
 
 module.exports = {
-    sendNotification
+  sendNotification,
+  userOnline,
+  userDissconection
 }
 
-  

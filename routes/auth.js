@@ -2,7 +2,7 @@
 const { Router } = require("express")
 const { check } = require("express-validator")
 const { validarCampos } = require("../middlware/validarCampos.js")
-const { CrearUsuario, LoginUsuario, RevalidarJWT, ListadoUsuarios, getInfoByToken,getUserById, getListFriends, AddNewFriend, addAnimeFav, listAnimeFav, getFriendRequest, aceptarAmigo, rechazarAmigo } = require("../controladores/auth.js")
+const { CrearUsuario, LoginUsuario, RevalidarJWT, getInfoByToken } = require("../controladores/auth.js")
 const { ValidarJWT } = require("../helpers/revalidarJWT.js")
 const router = Router();
 
@@ -24,23 +24,6 @@ router.get("/validarUserInfoByToken", ValidarJWT, getInfoByToken)
 
 router.get("/revalidarJWT", ValidarJWT, RevalidarJWT)
 
-router.get("/listU", ListadoUsuarios)
-
-router.post("/litFriends", getListFriends)
-
-router.put("/newFriend", AddNewFriend)
-
-router.post("/getFriendRequest", getFriendRequest)
-
-router.put("/aceptarAmigo", aceptarAmigo)
-
-router.put("/rechazarAmigo", rechazarAmigo)
-
-router.post("/addAnimeFav", addAnimeFav)
-
-router.post("/listAnimeFav", listAnimeFav)
-
-router.post("/getUserById",getUserById)
 
 
 
