@@ -13,7 +13,7 @@ const { userOnline } = require("../helpers/pusherEvent.js")
 
 const CrearUsuario = async (req = request, res = response) => {
 
-    const { photo, name, email, password, rol } = req.body
+    const { photo, name, portada, email, password, rol } = req.body
 
     try {
 
@@ -46,6 +46,7 @@ const CrearUsuario = async (req = request, res = response) => {
             uid: usuario._id,
             rol: usuario.rol,
             photo: usuario.photo,
+            portada: usuario.portada,
             token: token
         })
     } catch (error) {
@@ -109,8 +110,8 @@ const LoginUsuario = async (req, res = response) => {
             name: usuario.name,
             rol: usuario.rol,
             photo: usuario.photo,
+            portada: usuario.portada,
             token: token
-
         })
 
     } catch (error) {

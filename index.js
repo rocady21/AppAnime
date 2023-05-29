@@ -7,7 +7,7 @@ const cors = require("cors")
 
 dbConection();
 
-// cors para dar permiso a rutas 
+//decirle a mi servidor que puede usar cualquier dominio
 app.use(cors())
 
 // lo que le digo es que las peticiones que haga en formato json las extraigo 

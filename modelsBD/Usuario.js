@@ -5,6 +5,10 @@ const UsuarioSchema = Schema({
         type: String,
         require: true
     },
+    portada: {
+        type: String,
+        require: true
+    },
     name: {
         type: String,
         require: true

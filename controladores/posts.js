@@ -5,12 +5,14 @@ const Animes = require("../modelsBD/Animes.js")
 
 
 const addNewPost = async (req, res = response) => {
-    const { id_user_publicate } = req.body
 
-    const User = await Usuario.findOne({ _id: id_user_publicate })
+    const { Id_user_publicate } = req.body
+
+    const User = await Usuario.findOne({ _id: Id_user_publicate })
 
     try {
         if (User) {
+            console.log("xd")
             const post = new Posts(req.body)
 
             await post.save()
@@ -19,6 +21,7 @@ const addNewPost = async (req, res = response) => {
                 ok: true,
                 post
             })
+            console.log(post)
         }
     } catch (error) {
         console.log(error)
@@ -37,7 +40,7 @@ const FilterPostByUser = async (req, res = response) => {
     const user = await Usuario.findOne({ _id: id_user })
     try {
         if (user) {
-            const userPost = await Posts.find({ id_user_publicate: id_user })
+            const userPost = await Posts.find({ Id_user_publicate: id_user })
             if (userPost[0]) {
                 res.status(200).json({
                     ok: true,
@@ -113,11 +116,59 @@ const BorrarPost = async (req, res = response) => {
 
 }
 
+const filterPostById = async (req, res = response) => {
+    const { id_post } = req.body
+    try {
+        const post = await Posts.findOne({ _id: id_post })
+
+        if (post) {
+            res.status(200).json({
+                ok: true,
+                post
+            })
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const addLike = (req, res = response) => {
+    const { id_post } = req.body
+}
+const quitLike = (req, res = response) => {
+    const { id_post } = req.body
+
+}
+const addDisLike = (req, res = response) => {
+    const { id_post } = req.body
+
+}
+const quitDisLike = (req, res = response) => {
+    const { id_post } = req.body
+
+}
+
+const addComentario = (req, res = response) => {
+    const { id_post, id_comentario } = req.body
+
+}
+const deleteComentario = (req, res = response) => {
+    const { id_post, id_comentario } = req.body
+
+}
+const updateComentario = (req, res = response) => {
+    const { id_post, id_comentario } = req.body
+
+}
+
+
 
 
 module.exports = {
     addNewPost,
     FilterPostByUser,
     ActualizarPost,
-    BorrarPost
+    BorrarPost,
+    filterPostById
 } 

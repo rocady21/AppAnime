@@ -1,14 +1,14 @@
 const { Schema, model } = require("mongoose")
 
 const PostSchema = Schema({
-    descripcion: {
+    Descripcion: {
         type: String,
         require: true
     },
-    foto: {
+    Foto: {
         type: String
     },
-    id_user_publicate: {
+    Id_user_publicate: {
         type: Schema.Types.ObjectId,
         ref: "Usuario",
         require: true
@@ -21,6 +21,9 @@ const PostSchema = Schema({
         require: true
     },
     MeGusta: {
+        type: Number
+    },
+    NoMeGusta: {
         type: Number
     },
     Comentarios: [
