@@ -50,7 +50,7 @@ const UsuarioSchema = Schema({
                 type: String,
                 require: true
             },
-            comentario: {
+            nota: {
                 type: String
             },
         }

@@ -455,6 +455,20 @@ const listFriendOnline = async (req, res = response) => {
 
 }
 
+const loadinfoUserById = async (req, res = response) => {
+    const { id_user } = req.body
+    try {
+        const user = await Usuario.findOne({ _id: id_user })
+        if (user) {
+            res.status(200).json({
+                ok: true,
+                user: user
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 module.exports = {
@@ -468,5 +482,7 @@ module.exports = {
     getFriendRequest,
     getUserById,
     listFriendOnline,
-    userDissconect
+    userDissconect,
+    loadinfoUserById
+
 }

@@ -19,10 +19,6 @@ app.use("/api/posts", require("./routes/post.js"))
 app.use("/api/chat", require("./routes/Chat.js"))
 
 
-
-
-
-
 const PUERTO = process.env.PUERTO
 app.listen(PUERTO, () => {
     console.log(`el servidor esta escuchando en el puerto ${PUERTO}`)

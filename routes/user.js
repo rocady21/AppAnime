@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router()
-const { ListadoUsuarios, getListFriends, userDissconect, AddNewFriend, getFriendRequest, listFriendOnline, aceptarAmigo, rechazarAmigo, addAnimeFav, listAnimeFav, getUserById } = require("../controladores/User.js")
+const { ListadoUsuarios, getListFriends, userDissconect, loadinfoUserById, AddNewFriend, getFriendRequest, listFriendOnline, aceptarAmigo, rechazarAmigo, addAnimeFav, listAnimeFav, getUserById } = require("../controladores/User.js")
 
 
 router.get("/listU", ListadoUsuarios)
@@ -24,6 +24,8 @@ router.post("/getUserById", getUserById)
 router.post("/friendsOnline", listFriendOnline)
 
 router.post("/userDissconect", userDissconect)
+
+router.post("/loadinfoUserById", loadinfoUserById)
 
 
 module.exports = router;

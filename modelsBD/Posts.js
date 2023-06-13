@@ -20,12 +20,24 @@ const PostSchema = Schema({
         type: String,
         require: true
     },
-    MeGusta: {
-        type: Number
-    },
-    NoMeGusta: {
-        type: Number
-    },
+    MeGusta: [
+        {
+            id_user: {
+                type: Schema.Types.ObjectId,
+                ref: "Usuario",
+                require: true
+            }
+        }
+    ],
+    NoMeGusta: [
+        {
+            id_user: {
+                type: Schema.Types.ObjectId,
+                ref: "Usuario",
+                require: true
+            }
+        }
+    ],
     Comentarios: [
         {
             id_User: {
@@ -34,6 +46,9 @@ const PostSchema = Schema({
                 require: true
             },
             photo: {
+                type: String
+            },
+            name: {
                 type: String
             },
             comentario: {

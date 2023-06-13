@@ -25,10 +25,24 @@ const userDissconection = (userID) => {
   });
 }
 
+const LikesTotales = (likes) => {
+  pusher.trigger("statusLike", "addorquitLike", {
+    message: likes
+  })
+}
+
+const DislikesTotales = (dislikes) => {
+  pusher.trigger("statusDislike", "addorquitDislike", {
+    message: dislikes
+  })
+}
+
 
 module.exports = {
   sendNotification,
   userOnline,
-  userDissconection
+  userDissconection,
+  LikesTotales,
+  DislikesTotales
 }
 
