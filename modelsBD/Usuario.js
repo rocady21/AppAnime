@@ -5,6 +5,10 @@ const UsuarioSchema = Schema({
         type: String,
         require: true
     },
+    portada: {
+        type: String,
+        require: true
+    },
     name: {
         type: String,
         require: true
@@ -46,11 +50,14 @@ const UsuarioSchema = Schema({
                 type: String,
                 require: true
             },
-            comentario: {
+            nota: {
                 type: String
             },
         }
-    ]
+    ],
+    status: {
+        type: String
+    }
 })
 
 module.exports = model("Usuario", UsuarioSchema)

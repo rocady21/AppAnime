@@ -8,17 +8,43 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-const sendNotification = (user,data)=> {
-    pusher.trigger(`friendRequest-${user}`, "addNotification", {
-        message: data
-      });
+const sendNotification = (user, data) => {
+  pusher.trigger(`friendRequest-${user}`, "addNotification", {
+    message: data
+  });
+}
+
+const userOnline = (userID) => {
+  pusher.trigger(`friendsOnline`, "addFriendOnline", {
+    message: userID
+  });
+}
+const userDissconection = (userID) => {
+  pusher.trigger(`userDissconect`, "removeFriendOnline", {
+    message: userID
+  });
+}
+
+const LikesTotales = (likes) => {
+  pusher.trigger("statusLike", "addorquitLike", {
+    message: likes
+  })
+}
+
+const DislikesTotales = (dislikes) => {
+  pusher.trigger("statusDislike", "addorquitDislike", {
+    message: dislikes
+  })
 }
 
 // pusher para Interacciones(likes,dislikes y quitar los mismos)
 
 
 module.exports = {
-    sendNotification
+  sendNotification,
+  userOnline,
+  userDissconection,
+  LikesTotales,
+  DislikesTotales
 }
 
-  
