@@ -115,9 +115,12 @@ const BorrarPost = async (req, res = response) => {
 
 
 
+
+
 module.exports = {
     addNewPost,
     FilterPostByUser,
     ActualizarPost,
-    BorrarPost
+    BorrarPost,
+
 } 

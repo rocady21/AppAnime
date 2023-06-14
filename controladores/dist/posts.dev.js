@@ -133,11 +133,116 @@ var FilterPostByUser = function FilterPostByUser(req) {
 };
 
 var ActualizarPost = function ActualizarPost(req) {
-  var res = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : response;
+  var res,
+      _req$body,
+      id_Post,
+      CamposaActualizar,
+      animeActualizado,
+      _args3 = arguments;
+
+  return regeneratorRuntime.async(function ActualizarPost$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          res = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : response;
+          _req$body = req.body, id_Post = _req$body.id_Post, CamposaActualizar = _req$body.CamposaActualizar;
+          _context3.prev = 2;
+
+          if (!CamposaActualizar) {
+            _context3.next = 10;
+            break;
+          }
+
+          _context3.next = 6;
+          return regeneratorRuntime.awrap(Posts.updateOne({
+            _id: id_Post
+          }, {
+            $set: CamposaActualizar
+          }));
+
+        case 6:
+          animeActualizado = _context3.sent;
+          res.status(200).json({
+            ok: true,
+            msg: "Post Actualizado",
+            animeActualizado: animeActualizado
+          });
+          _context3.next = 11;
+          break;
+
+        case 10:
+          throw Error("Debe de ingresar nuevos valores para actualizar el post");
+
+        case 11:
+          _context3.next = 17;
+          break;
+
+        case 13:
+          _context3.prev = 13;
+          _context3.t0 = _context3["catch"](2);
+          console.log(_context3.t0);
+          res.status(400).json({
+            ok: false,
+            msg: "Hubo un error al actualizar el post"
+          });
+
+        case 17:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[2, 13]]);
 };
 
 var BorrarPost = function BorrarPost(req) {
-  var res = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : response;
+  var res,
+      id_Post,
+      PostBorrado,
+      _args4 = arguments;
+  return regeneratorRuntime.async(function BorrarPost$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          res = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : response;
+          id_Post = req.body.id_Post;
+          _context4.prev = 2;
+
+          if (!id_Post) {
+            _context4.next = 8;
+            break;
+          }
+
+          _context4.next = 6;
+          return regeneratorRuntime.awrap(Posts.deleteOne({
+            _id: id_Post
+          }));
+
+        case 6:
+          PostBorrado = _context4.sent;
+
+          if (PostBorrado) {
+            res.status(200).json({
+              ok: true,
+              msg: "Post Borrado Exitosamente",
+              PostBorrado: PostBorrado
+            });
+          }
+
+        case 8:
+          _context4.next = 13;
+          break;
+
+        case 10:
+          _context4.prev = 10;
+          _context4.t0 = _context4["catch"](2);
+          console.log(_context4.t0);
+
+        case 13:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  }, null, null, [[2, 10]]);
 };
 
 module.exports = {

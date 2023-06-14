@@ -14,6 +14,8 @@ const sendNotification = (user,data)=> {
       });
 }
 
+// pusher para Interacciones(likes,dislikes y quitar los mismos)
+
 
 module.exports = {
     sendNotification

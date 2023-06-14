@@ -14,7 +14,8 @@ var sendNotification = function sendNotification(user, data) {
   pusher.trigger("friendRequest-".concat(user), "addNotification", {
     message: data
   });
-};
+}; // pusher para Interacciones(likes,dislikes y quitar los mismos)
+
 
 module.exports = {
   sendNotification: sendNotification

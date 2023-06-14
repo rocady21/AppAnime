@@ -2,8 +2,6 @@ const { Router } = require("express")
 const { addNewPost, FilterPostByUser, ActualizarPost, BorrarPost } = require("../controladores/posts.js")
 const { check } = require("express-validator")
 const { validarCampos } = require("../middlware/validarCampos.js")
-const { isNumber } = require("util")
-const { isNumberObject } = require("util/types")
 const router = Router()
 
 
@@ -17,5 +15,6 @@ router.post("/newPost", [
 router.post("/filterPost", FilterPostByUser)
 router.put("/actualizarPost", ActualizarPost)
 router.delete("/BorrarPost", BorrarPost)
+
 
 module.exports = router
