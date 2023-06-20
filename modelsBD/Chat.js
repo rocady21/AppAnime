@@ -1,10 +1,7 @@
 const { Schema, model } = require("mongoose")
 
 const ChatSchema = Schema({
-    message: {
-        type: String
-    },
-    time: {
+    initChatDate: {
         type: Date
     },
     to: {
@@ -16,9 +13,21 @@ const ChatSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: "Usuario"
     },
-    isMe: {
-        type: Boolean
-    }
+    messages: [
+        {
+            message: {
+                type: String,
+                require: true
+            },
+            time: {
+                type: Date
+            },
+            id_user: {
+                type: Schema.Types.ObjectId,
+                ref: "Usuario"
+            }
+        }
+    ]
 
 })
 
