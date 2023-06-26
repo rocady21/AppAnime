@@ -8,6 +8,9 @@ var Chat = require("../modelsBD/Chat");
 
 var Usuario = require("../modelsBD/Usuario");
 
+var _require2 = require("../helpers/pusherEvent"),
+    messageRealTime = _require2.messageRealTime;
+
 var newChat = function newChat(req) {
   var res,
       _req$body,
@@ -110,14 +113,14 @@ var newChat = function newChat(req) {
   }, null, null, [[10, 22]]);
 };
 
-var loadMessagesContact = function loadMessagesContact(req) {
+var LoadinfoContactsMessages = function LoadinfoContactsMessages(req) {
   var res,
       id_me,
       chats,
       userstoChatId,
       usersinfo,
       _args3 = arguments;
-  return regeneratorRuntime.async(function loadMessagesContact$(_context3) {
+  return regeneratorRuntime.async(function LoadinfoContactsMessages$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
@@ -144,12 +147,9 @@ var loadMessagesContact = function loadMessagesContact(req) {
 
           console.log(chats); // ahora que tenemos todos nuestros chats,necesitamos cargar la info de los usuarios 
 
-          userstoChatId = [];
-          chats.map(function (chats) {
-            console.log(chats.from);
-            console.log(id_me);
-            console.log("talon");
+          userstoChatId = []; // para añadir los id de usuarios con los que tenga un chat
 
+          chats.map(function (chats) {
             if (chats.from == id_me) {
               userstoChatId.push(chats.to);
             } else {
@@ -165,7 +165,7 @@ var loadMessagesContact = function loadMessagesContact(req) {
           usersinfo = [];
           _context3.next = 14;
           return regeneratorRuntime.awrap(Promise.all(userstoChatId.map(function _callee(idUser) {
-            var user, dataRequired;
+            var user, chat, messageReverse, lastMessage, dataRequired;
             return regeneratorRuntime.async(function _callee$(_context2) {
               while (1) {
                 switch (_context2.prev = _context2.next) {
@@ -177,15 +177,31 @@ var loadMessagesContact = function loadMessagesContact(req) {
 
                   case 2:
                     user = _context2.sent;
+                    _context2.next = 5;
+                    return regeneratorRuntime.awrap(Chat.findOne({
+                      $or: [{
+                        from: id_me,
+                        to: idUser
+                      }, {
+                        to: id_me,
+                        from: idUser
+                      }]
+                    }));
+
+                  case 5:
+                    chat = _context2.sent;
+                    messageReverse = chat.messages.reverse();
+                    lastMessage = messageReverse[0];
                     dataRequired = {
                       id: user.id,
                       name: user.name,
                       photo: user.photo,
-                      status: user.status
+                      status: user.status,
+                      lastMessage: lastMessage
                     };
                     return _context2.abrupt("return", usersinfo.push(dataRequired));
 
-                  case 5:
+                  case 10:
                   case "end":
                     return _context2.stop();
                 }
@@ -239,6 +255,7 @@ var addMessageChat = function addMessageChat(req) {
       id_me,
       id_user,
       message,
+      chat,
       datainsert,
       chatUpdated,
       _args4 = arguments;
@@ -249,13 +266,26 @@ var addMessageChat = function addMessageChat(req) {
         case 0:
           res = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : response;
           _req$body2 = req.body, id_me = _req$body2.id_me, id_user = _req$body2.id_user, message = _req$body2.message;
-          _context4.prev = 2;
+          _context4.next = 4;
+          return regeneratorRuntime.awrap(Chat.findOne({
+            $or: [{
+              from: id_me,
+              to: id_user
+            }, {
+              to: id_me,
+              from: id_user
+            }]
+          }));
+
+        case 4:
+          chat = _context4.sent;
+          _context4.prev = 5;
           datainsert = {
             message: message,
             time: new Date(),
             id_user: id_me
           };
-          _context4.next = 6;
+          _context4.next = 9;
           return regeneratorRuntime.awrap(Chat.updateOne({
             $or: [{
               from: id_me,
@@ -270,7 +300,7 @@ var addMessageChat = function addMessageChat(req) {
             }
           }));
 
-        case 6:
+        case 9:
           chatUpdated = _context4.sent;
 
           if (chatUpdated) {
@@ -279,22 +309,23 @@ var addMessageChat = function addMessageChat(req) {
               msg: "Mensaje enviado correctamente ",
               chatUpdated: chatUpdated
             });
+            messageRealTime(chat.from, chat.to, datainsert);
           }
 
-          _context4.next = 13;
+          _context4.next = 16;
           break;
 
-        case 10:
-          _context4.prev = 10;
-          _context4.t0 = _context4["catch"](2);
+        case 13:
+          _context4.prev = 13;
+          _context4.t0 = _context4["catch"](5);
           console.log(_context4.t0);
 
-        case 13:
+        case 16:
         case "end":
           return _context4.stop();
       }
     }
-  }, null, null, [[2, 10]]);
+  }, null, null, [[5, 13]]);
 };
 
 var loadMessageMeToUser = function loadMessageMeToUser(req) {
@@ -331,7 +362,7 @@ var loadMessageMeToUser = function loadMessageMeToUser(req) {
               messages = chat.messages;
               res.status(200).json({
                 ok: true,
-                messages: messages
+                chat: chat
               });
             } else {
               console.log("no existe el chat");
@@ -351,6 +382,6 @@ var loadMessageMeToUser = function loadMessageMeToUser(req) {
 module.exports = {
   newChat: newChat,
   addMessageChat: addMessageChat,
-  loadMessagesContact: loadMessagesContact,
+  LoadinfoContactsMessages: LoadinfoContactsMessages,
   loadMessageMeToUser: loadMessageMeToUser
 };

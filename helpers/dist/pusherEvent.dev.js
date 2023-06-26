@@ -14,9 +14,55 @@ var sendNotification = function sendNotification(user, data) {
   pusher.trigger("friendRequest-".concat(user), "addNotification", {
     message: data
   });
+};
+
+var userOnline = function userOnline(userID) {
+  pusher.trigger("friendsOnline", "addFriendOnline", {
+    message: userID
+  });
+};
+
+var userDissconection = function userDissconection(userID) {
+  pusher.trigger("userDissconect", "removeFriendOnline", {
+    message: userID
+  });
+};
+
+var LikesTotales = function LikesTotales(likes) {
+  pusher.trigger("statusLike", "addorquitLike", {
+    message: likes
+  });
+};
+
+var DislikesTotales = function DislikesTotales(dislikes) {
+  pusher.trigger("statusDislike", "addorquitDislike", {
+    message: dislikes
+  });
+}; // const name = (message) => {
+//   pusher.trigger("nameChannel","nameEvent",{
+//    message:disLikes  
+// })
+// }
+
+
+var messageRealTime = function messageRealTime(from, to, message) {
+  pusher.trigger("messages-".concat(from, "and-").concat(to), "sendMessage", {
+    message: message
+  });
+};
+
+var isWriting = function isWriting() {
+  pusher.trigger("isWriting", "writing", {
+    message: false
+  });
 }; // pusher para Interacciones(likes,dislikes y quitar los mismos)
 
 
 module.exports = {
-  sendNotification: sendNotification
+  sendNotification: sendNotification,
+  userOnline: userOnline,
+  userDissconection: userDissconection,
+  LikesTotales: LikesTotales,
+  DislikesTotales: DislikesTotales,
+  messageRealTime: messageRealTime
 };

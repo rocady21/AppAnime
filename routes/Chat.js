@@ -1,4 +1,4 @@
-const { newChat, addMessageChat, loadMessagesContact, loadMessageMeToUser } = require("../controladores/Chat.js")
+const { newChat, addMessageChat, LoadinfoContactsMessages,LastMessageFromUser, loadMessageMeToUser } = require("../controladores/Chat.js")
 const { Router } = require("express")
 const router = Router();
 
@@ -10,9 +10,10 @@ router.post("/newChat", newChat)
 
 router.put("/addMessageChat", addMessageChat)
 
-router.post("/LoadMessages", loadMessagesContact)
+router.post("/LoadinfoContactsMessages", LoadinfoContactsMessages)
 
 router.post("/loadMessageMeToUser", loadMessageMeToUser)
+
 
 // borrar chat
 

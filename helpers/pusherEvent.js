@@ -37,6 +37,24 @@ const DislikesTotales = (dislikes) => {
   })
 }
 
+// const name = (message) => {
+//   pusher.trigger("nameChannel","nameEvent",{
+//    message:disLikes  
+// })
+// }
+
+const messageRealTime = (from,to,message) => {
+  pusher.trigger(`messages-${from}and-${to}`,"sendMessage",{
+    message:message
+  })
+}
+
+const isWriting = ()=> {
+  pusher.trigger(`isWriting`,"writing",{
+    message:false
+  })
+}
+
 // pusher para Interacciones(likes,dislikes y quitar los mismos)
 
 
@@ -45,6 +63,7 @@ module.exports = {
   userOnline,
   userDissconection,
   LikesTotales,
-  DislikesTotales
+  DislikesTotales,
+  messageRealTime
 }
 

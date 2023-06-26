@@ -1,6 +1,7 @@
 const { response, request } = require("express")
 const Chat = require("../modelsBD/Chat")
 const Usuario = require("../modelsBD/Usuario")
+const { messageRealTime } = require("../helpers/pusherEvent")
 
 
 const newChat = async (req, res = response) => {
@@ -46,7 +47,7 @@ const newChat = async (req, res = response) => {
     }
 
 }
-const loadMessagesContact = async (req, res = response) => {
+const LoadinfoContactsMessages = async (req, res = response) => {
     // para cargar todos mis chats con personas necesito mi id
     const { id_me } = req.body
     const chats = await Chat.find({ $or: [{ from: id_me }, { to: id_me }] })
@@ -56,26 +57,29 @@ const loadMessagesContact = async (req, res = response) => {
             // ahora que tenemos todos nuestros chats,necesitamos cargar la info de los usuarios 
             const userstoChatId = []
 
+            // para añadir los id de usuarios con los que tenga un chat
             chats.map((chats) => {
-                console.log(chats.from)
-                console.log(id_me)
-                console.log("talon")
                 if (chats.from == id_me) {
                     userstoChatId.push(chats.to)
                 } else {
                     userstoChatId.push(chats.from)
                 }
             })
+            
             if (userstoChatId) {
                 const usersinfo = []
                 await Promise.all(
                     userstoChatId.map(async (idUser) => {
                         const user = await Usuario.findOne({ _id: idUser })
+                        const chat = await Chat.findOne({ $or: [{ from: id_me, to: idUser }, { to: id_me, from:idUser }] })
+                        const messageReverse = chat.messages.reverse()
+                        const lastMessage = messageReverse[0]
                         const dataRequired = {
                             id: user.id,
                             name: user.name,
                             photo: user.photo,
-                            status: user.status
+                            status: user.status,
+                            lastMessage:lastMessage
                         }
                         return usersinfo.push(dataRequired)
                     })
@@ -110,6 +114,7 @@ const loadMessagesContact = async (req, res = response) => {
 const addMessageChat = async (req, res = response) => {
 
     const { id_me, id_user, message } = req.body
+    const chat = await Chat.findOne({ $or: [{ from: id_me, to: id_user }, { to: id_me, from: id_user }] })
     try {
 
         const datainsert = {
@@ -129,6 +134,9 @@ const addMessageChat = async (req, res = response) => {
                 chatUpdated,
 
             })
+            
+            messageRealTime(chat.from,chat.to,datainsert)
+
         }
     } catch (error) {
         console.log(error)
@@ -143,7 +151,7 @@ const loadMessageMeToUser = async (req, res = response) => {
             const messages = chat.messages
             res.status(200).json({
                 ok: true,
-                messages
+                chat
             })
 
         } else {
@@ -158,7 +166,7 @@ const loadMessageMeToUser = async (req, res = response) => {
 module.exports = {
     newChat,
     addMessageChat,
-    loadMessagesContact,
-    loadMessageMeToUser
+    LoadinfoContactsMessages,
+    loadMessageMeToUser,
 
 }

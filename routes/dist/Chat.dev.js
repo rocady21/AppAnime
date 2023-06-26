@@ -3,7 +3,8 @@
 var _require = require("../controladores/Chat.js"),
     newChat = _require.newChat,
     addMessageChat = _require.addMessageChat,
-    loadMessagesContact = _require.loadMessagesContact,
+    LoadinfoContactsMessages = _require.LoadinfoContactsMessages,
+    LastMessageFromUser = _require.LastMessageFromUser,
     loadMessageMeToUser = _require.loadMessageMeToUser;
 
 var _require2 = require("express"),
@@ -13,7 +14,7 @@ var router = Router(); // a la hora de crear usuario madnaremos el name, email y
 
 router.post("/newChat", newChat);
 router.put("/addMessageChat", addMessageChat);
-router.post("/LoadMessages", loadMessagesContact);
+router.post("/LoadinfoContactsMessages", LoadinfoContactsMessages);
 router.post("/loadMessageMeToUser", loadMessageMeToUser); // borrar chat
 // borrar mensaje
 //actualizar mensajes

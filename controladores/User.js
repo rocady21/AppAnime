@@ -2,6 +2,8 @@ const { response } = require("express");
 const Usuario = require("../modelsBD/Usuario.js");
 const Animes = require("../modelsBD/Animes.js");
 const { userDissconection } = require("../helpers/pusherEvent.js");
+const jwt = require("jsonwebtoken")
+
 
 const ListadoUsuarios = async (req, res = response) => {
 
@@ -470,6 +472,20 @@ const loadinfoUserById = async (req, res = response) => {
     }
 }
 
+const deleteFriend = async(req, res = response)=> {
+    console.log("hola mundo")
+    const token = req?.header("x-token");
+    const {id_user} = req.body
+    const { id: userId } = jwt.verify(token, process.env.PALABRA_SECRETA);
+    if(id_user) {
+        res.status(200).json({
+            ok:true,
+            id_User:userId,
+
+        })
+    }
+}
+
 
 module.exports = {
     ListadoUsuarios,
@@ -483,6 +499,7 @@ module.exports = {
     getUserById,
     listFriendOnline,
     userDissconect,
-    loadinfoUserById
+    loadinfoUserById,
+    deleteFriend
 
 }
