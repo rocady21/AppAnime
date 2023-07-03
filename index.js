@@ -2,7 +2,17 @@ const express = require("express")
 const dotenv = require("dotenv").config();
 const { dbConection } = require("./configDB.js")
 const app = express()
-const cors = require("cors")
+var ServidorSocket = require("http").Server(app);
+var io = require("socket.io")(ServidorSocket);
+const cors = require("cors");
+
+//uso de socket.io
+io.on("connection",(socket)=> {
+
+    console.log("usuario conectado")
+    socket.emit("hello","world")
+})
+console.log(io.path())
 // conexion bd
 
 dbConection();
@@ -23,3 +33,8 @@ const PUERTO = process.env.PUERTO
 app.listen(PUERTO, () => {
     console.log(`el servidor esta escuchando en el puerto ${PUERTO}`)
 })
+
+
+module.exports = {
+    app
+}
